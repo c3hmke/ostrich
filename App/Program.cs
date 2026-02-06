@@ -32,12 +32,6 @@ internal class Program
             ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.DockingEnable;
         };
 
-        // Resize : Handle what happens when window size changes
-        _window.FramebufferResize += size =>
-        {
-            _gl.Viewport(0, 0, (uint) size.X, (uint) size.Y);
-        };
-
         // Render : What to do when a frame is rendered
         _window.Render += delta =>
         {
@@ -49,19 +43,29 @@ internal class Program
             _gl.Clear((uint) ClearBufferMask.ColorBufferBit);
             
             ImGui.ShowDemoWindow(); // Built-in demo window
+            if (ImGui.BeginMainMenuBar())
+            {
+                if (ImGui.BeginMenu("File"))
+                {
+                    if (ImGui.MenuItem("Exit")) _window.Close();
+                   
+                    ImGui.EndMenu();
+                }
+                
+                ImGui.EndMainMenuBar();
+            }
+
 
             _imGui.Render();
         };
+        
+        // Resize : Handle what happens when window size changes
+        _window.FramebufferResize += size => _gl.Viewport(0, 0, (uint) size.X, (uint) size.Y);
 
         // Closing : Clean up on exit
-        _window.Closing += () =>
-        {
-            _imGui.Dispose();
-            _input.Dispose();
-            _gl.Dispose();
-        };
+        _window.Closing += () => _imGui.Dispose();
 
-        _window.Run();
-        _window.Dispose();
+        _window.Run();          // Run runs the render loop and blocks until return
+        _window.Dispose();      // At which point we can dispose the window.
     }
 }
