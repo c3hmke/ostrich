@@ -45,6 +45,12 @@ internal class Program
             _imGui = new ImGuiController(_gl, _window, _input);
             
             ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.DockingEnable;
+            
+            // Ensure viewport matches actual framebuffer size at start
+            var fb = _window.FramebufferSize;
+            _gl.Viewport(0, 0, (uint)fb.X, (uint)fb.Y);
+            
+            ApplyScale();
         };
         
         // Update : Changes to be made when window itself is modified
@@ -55,6 +61,7 @@ internal class Program
             {
                 _scale = _pendingScale.Value;
                 _pendingScale = null;
+                
                 ApplyScale();
             }
         }; 
