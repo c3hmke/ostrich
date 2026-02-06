@@ -4,6 +4,7 @@
 using System.Drawing;
 using ImGuiNET;
 using Silk.NET.Input;
+using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
@@ -17,10 +18,23 @@ internal class Program
     private static IInputContext   _input  = null!;
     private static ImGuiController _imGui  = null!;
     
+    private const  int BaseHeight = 160;                // Base Height of GB(C) screen in PX
+    private const  int BaseWidth  = 144;                // Base Width  of GB(C) screen in PX
+    
+    private static int  _scale = 3;                     // The current emulator scale
+    private const  int  MenuBarReservePx = 18;          // Number of pixels to preserve for menu bar
+    
     private static void Main()
     {
         // Create a Silk.NET window
-        _window = Window.Create(WindowOptions.Default);
+        var windowOptions = WindowOptions.Default;
+        
+        windowOptions.WindowBorder = WindowBorder.Fixed;
+        windowOptions.Size = new Vector2D<int>(
+            BaseWidth  * _scale,
+            BaseHeight * _scale + MenuBarReservePx);
+        
+        _window = Window.Create(windowOptions);
         
         // Load : Set up when window is loaded
         _window.Load += () =>
@@ -42,7 +56,7 @@ internal class Program
             _gl.ClearColor(Color.FromArgb(255, (int) (.45f * 255), (int) (.55f * 255), (int) (.60f * 255)));
             _gl.Clear((uint) ClearBufferMask.ColorBufferBit);
             
-            ImGui.ShowDemoWindow(); // Built-in demo window
+            //ImGui.ShowDemoWindow(); // Built-in demo window
             if (ImGui.BeginMainMenuBar())
             {
                 if (ImGui.BeginMenu("File"))
