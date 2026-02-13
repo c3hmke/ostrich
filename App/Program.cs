@@ -2,6 +2,8 @@
 //                                             "correct context" SIGABRT happens on other resources resulting in dirty exit.
 
 using System.Drawing;
+using Emulation;
+using GameBoy;
 using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.Maths;
@@ -17,9 +19,8 @@ internal class Program
     private static GL              _gl     = null!;
     private static IInputContext   _input  = null!;
     private static ImGuiController _imGui  = null!;
-    
-    private const  int BaseHeight = 160;                // Base Height of GB(C) screen in PX
-    private const  int BaseWidth  = 144;                // Base Width  of GB(C) screen in PX
+
+    private static IVideoSource    _video = null!;
     
     private static int  _scale = 3;                     // The current emulator scale
     private static int? _pendingScale;                  // New scale to be applied on change
@@ -28,14 +29,16 @@ internal class Program
     
     private static void Main()
     {
+        _video = new GBVideoSource();
+        
         // Create a Silk.NET window
         var windowOptions = WindowOptions.Default;
         
         windowOptions.WindowBorder = WindowBorder.Fixed;
         windowOptions.VSync = true;
         windowOptions.Size  = new Vector2D<int>(
-            (BaseWidth  * _scale) + (PaddingPx * 2),
-            (BaseHeight * _scale) + (PaddingPx * 2) + MenuBarReservePx);
+            (_video.Width  * _scale) + (PaddingPx * 2),
+            (_video.Height * _scale) + (PaddingPx * 2) + MenuBarReservePx);
         
         _window = Window.Create(windowOptions);
         
@@ -152,8 +155,8 @@ internal class Program
     {
         // Resize the window to the new scale
         _window.Size = new Vector2D<int>(
-            (BaseWidth  * _scale) + (PaddingPx * 2),
-            (BaseHeight * _scale) + (PaddingPx * 2) + MenuBarReservePx);
+            (_video.Width  * _scale) + (PaddingPx * 2),
+            (_video.Height * _scale) + (PaddingPx * 2) + MenuBarReservePx);
         
         // Recreate ImGui controller so it picks up new framebuffer size + rebuilds device objects
         _imGui.Dispose();
