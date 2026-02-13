@@ -15,4 +15,9 @@
       <PackageReference Include="Silk.NET.Windowing" Version="2.23.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Emulation\Emulation.csproj" />
+      <ProjectReference Include="..\GameBoy\GameBoy.csproj" />
+    </ItemGroup>
+
 </Project>
